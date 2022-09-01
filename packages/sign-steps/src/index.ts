@@ -61,7 +61,7 @@ export class Signs {
         this.emit('startAtStep', i);
 
         const { address, functionSelector, parameters = [], options = {}, callbacks = () => {}, tronweb = {} } = this.stepParams[i-1];
-        const res = await send(address, functionSelector, { parameters, options, callbacks, tronweb });
+        const res = await send(address, functionSelector, parameters, options,{ callbacks, tronweb });
         if (res?.transaction?.txID) {
           this.completeNumber++;
           this.emit('signedAtStep', i);
