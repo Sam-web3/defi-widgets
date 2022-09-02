@@ -8,45 +8,35 @@ import {
 import classNames from 'classnames';
 import styles from '../assets/css/transaction.scss';
 
-interface CustomObjType {
-  title?: string;
-  wait_confirm?: string;
-  lang?: string;
-  confirm_wallet?: string;
-  submitted?: string;
-  view_on_tronscan?: string;
-  cancelled?: string;
-}
+// interface CustomObjType {
+//   title?: string;
+//   wait_confirm?: string;
+//   confirm_wallet?: string;
+//   submitted?: string;
+//   view_on_tronscan?: string;
+//   cancelled?: string;
+// }
+
+const title = 'Transaction';
+const wait_confirm = 'Waiting for your confirmation';
+const confirm_wallet = 'Please confirm in your wallet';
+const submitted = 'Transaction Submitted';
+const view_on_tronscan = 'View on TRONSCAN';
+const cancelled = 'Transaction Cancelled';
 
 const modalContent = (
-  stepInfo = { step: 0, txId: '' },
-  customObj: CustomObjType = {}
+  stepInfo: any = {
+    step: 0,
+    txId: '',
+    customObj: {}
+  },
+  {
+    tronscanLink = 'https://nile.tronscan.io/#'
+  } = {}
 ) => {
-  // const { stepInfo, customObj } = this.props;
-  const tronscanLink = 'https://nile.tronscan.io/#';
-  const { step, txId } = stepInfo;
+  const { step, txId, customObj } = stepInfo;
 
   if (!step) return;
-
-  const intlZh = {
-    transaction: '交易',
-    waiting: '等待您的确认',
-    confirm: '请在您的钱包中确认',
-    submited: '交易已提交',
-    tronscan: '在 TRONSCAN 上查看',
-    cancelled: '交易已取消',
-  };
-
-  const intlEn = {
-    transaction: 'Transaction',
-    waiting: 'Waiting for your confirmation',
-    confirm: 'Please confirm in your wallet',
-    submited: 'Transaction Submitted',
-    tronscan: 'View on TRONSCAN',
-    cancelled: 'Transaction Cancelled',
-  };
-
-  const intl = customObj?.lang === 'zh' ? intlZh : intlEn;
 
   return (
     <div className={styles.transModalContainer}>
@@ -54,7 +44,7 @@ const modalContent = (
       <div className={styles.transContent}>
         <div className={styles.transBody}>
           <div className={styles.transTitle}>
-            {customObj?.title ? customObj?.title : intl.transaction}
+            {customObj?.title || title}
           </div>
           {step == 1 ? (
             <React.Fragment>
@@ -68,12 +58,10 @@ const modalContent = (
                 />
               </div>
               <div className="trans-modal-status trans-modal-wait-confirm">
-                {customObj.wait_confirm ? customObj.wait_confirm : intl.waiting}
+                {customObj?.wait_confirm || wait_confirm}
               </div>
               <div className="trans-modal-tips trans-modal-wait-confirm-tips">
-                {customObj.confirm_wallet
-                  ? customObj.confirm_wallet
-                  : intl.confirm}
+                {customObj?.confirm_wallet || confirm_wallet}
               </div>
             </React.Fragment>
           ) : step == 2 ? (
@@ -84,7 +72,7 @@ const modalContent = (
                 ></CheckCircleOutlined>
               </div>
               <div className="trans-modal-status trans-modal-submit">
-                {customObj.submitted ? customObj.submitted : intl.submited}
+                {customObj?.submitted || submitted}
               </div>
               {txId && (
                 <div className="trans-modal-tips trans-modal-submit-tips">
@@ -94,9 +82,7 @@ const modalContent = (
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {customObj.view_on_tronscan
-                      ? customObj.view_on_tronscan
-                      : intl.tronscan}
+                    {customObj?.view_on_tronscan || view_on_tronscan}
                   </a>
                 </div>
               )}
@@ -109,7 +95,7 @@ const modalContent = (
                 ></CloseCircleOutlined>
               </div>
               <div className="trans-modal-status trans-modal-cancel">
-                {customObj.cancelled ? customObj.cancelled : intl.cancelled}
+                {customObj?.cancelled || cancelled}
               </div>
             </React.Fragment>
           ) : (

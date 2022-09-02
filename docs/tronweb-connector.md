@@ -66,7 +66,7 @@ Developer can listen to the TronLink events using the `on` method
 ### Parameters
 
 | Argument | Description | Type |
-| ----------- | ----------- | ----------- | 
+| ----------- | ----------- | ----------- |
 | _action | Action name of the event to listen | String |
 | cb | Call back function in response to the event | Function |
 

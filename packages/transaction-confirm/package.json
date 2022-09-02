@@ -30,7 +30,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "transaction-confirm",
+  "name": "@widgets/transaction-confirm",
   "author": "xulei",
   "module": "dist/transaction-confirm.esm.js",
   "size-limit": [

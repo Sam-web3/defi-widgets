@@ -1,44 +1,15 @@
 import { ContractInteract } from '@widgets/contract-interact';
 import { addNewTransactionToList, openTransModal, startPendingTransactionCheck } from '@widgets/transaction-confirm';
 import { TronWebConnector } from '@widgets/tronweb-connector';
-import { Modal, Steps } from 'antd';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import '../App.scss';
 import Menu from '../components/menu';
-const { trigger, sign, broadcast, send, sendTrx } = ContractInteract;
-const { Step } = Steps;
-
-const ContractExecutionFlowModal = ({ children, toggle }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  React.useEffect(() => {
-    if (toggle) {
-      setIsModalVisible(d => !d)
-    }
-  }, [toggle]);
-
-  const showModal = () => setIsModalVisible(true);
-
-  const handleCancel = () => setIsModalVisible(false);
-
-  return <>
-    <div className='items'>
-      <div className='item' onClick={showModal} >Show Contract Execution Flow Modal</div>
-    </div>
-    <Modal
-      style={{ top: '30%' }} title="Contract Execution Flow"
-      visible={isModalVisible} footer={null} onCancel={handleCancel}>
-      {children}
-    </Modal>
-  </>
-}
+const { sendTrx } = ContractInteract;
 
 function App() {
   const [defaultAccount, setDefaultAccount] = useState('');
-  const [sendTrxStep, setSendTrxStep] = useState(0);
   const [defaultAccountBalance, setDefaultAccountBalance] = useState('--');
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const trxPrecision = 1e6;
 
@@ -53,11 +24,7 @@ function App() {
     const accountInfo = await window.tronWeb.trx.getAccount(userAddress);
     const accountBalance = new BigNumber(accountInfo.balance).div(trxPrecision);
     setDefaultAccountBalance(accountBalance);
-    nextStep();
   };
-
-  const nextStep = () => setSendTrxStep(s => s + 1);
-  const backStep = (step = 1) => setSendTrxStep(step); // todo: back step if fail
 
   const activate = async () => {
     const res = await TronWebConnector.activate();
@@ -67,9 +34,7 @@ function App() {
   }
 
   const sendTrxFunc = async () => {
-    setIsModalVisible(true)
     openTransModal({ step: 1 });
-    nextStep();
 
     const res = await sendTrx(
       'TBHHa5Z6WQ1cRcgUhdvqdW4f728f2fiJmF',
@@ -78,13 +43,11 @@ function App() {
 
     if (res?.result) {
       const tx = res
-      openTransModal({ step: 2, txId: tx.txid }, { title: 'Send TRX success' });
+      openTransModal({ step: 2, txId: tx.txid, customObj: {title: 'Send TRX success'}});
       addNewTransactionToList(tx, { title: 'Send 1 TRX to somewhere' });
       startPendingTransactionCheck(3000);
-      nextStep();
     } else {
-      openTransModal({ step: 3 }, { title: 'Send TRX failed' });
-      backStep();
+      openTransModal({ step: 3, txId: '', customObj: {title: 'Send TRX failed'}});
     }
   }
 
@@ -107,17 +70,6 @@ function App() {
             <div className='item' onClick={() => activate()}>Connect Wallet</div>
           </div>
         }
-        <br />
-
-        {/*<ContractExecutionFlowModal toggle={isModalVisible}>*/}
-        {/*  <Steps direction="vertical" current={sendTrxStep}>*/}
-        {/*    <Step title="Connection" description="Connect the dapp with your wallet" />*/}
-        {/*    <Step title="Initiation" description="Initiate the contract function by pressing 'Send TRX'" />*/}
-        {/*    <Step title="Signing" description="Sign the function that you would like to execute" />*/}
-        {/*    <Step title="Broadcast" description="Wait for the signed transaction being broadcast to all nodes" />*/}
-        {/*    /!* <Step title="Synchronization" description="The transaction is getting confirmed on chain, Congrats" /> *!/*/}
-        {/*  </Steps>*/}
-        {/*</ContractExecutionFlowModal>*/}
       </section>
     </div>
   );
